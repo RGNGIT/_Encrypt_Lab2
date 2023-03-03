@@ -6,7 +6,7 @@ namespace _Encrypt_Lab2
     internal class Blowfish
     {
 
-        byte[] GlobalKey = null!;
+        byte[]? GlobalKey = null;
 
         public void DoStuff(bool sslGenerated)
         {
@@ -19,19 +19,16 @@ namespace _Encrypt_Lab2
                 case 1:
                     if (sslGenerated)
                     {
-                        if (GlobalKey == null)
-                        {
-                            GlobalKey = SSL.GenerateKey();
-                        }
+                        if (GlobalKey == null) GlobalKey = SSL.GenerateKey();
                         Console.WriteLine("Ключ: " + Convert.ToBase64String(GlobalKey));
                     }
                     Console.WriteLine("Введите строку для шифрования");
                     string toEncrypt = Console.ReadLine()!;
-                    File.WriteAllBytes("blowfish_encrypted", Encrypt(toEncrypt, sslGenerated ? GlobalKey : key));
+                    File.WriteAllBytes("blowfish_encrypted", Encrypt(toEncrypt, sslGenerated ? GlobalKey! : key));
                     break;
                 case 2:
                     byte[] encrypted = File.ReadAllBytes("blowfish_encrypted");
-                    Decrypt(encrypted, sslGenerated ? GlobalKey : key);
+                    Decrypt(encrypted, sslGenerated ? GlobalKey! : key);
                     break;
             }
             Console.ReadKey();

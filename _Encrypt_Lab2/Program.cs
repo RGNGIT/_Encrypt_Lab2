@@ -17,7 +17,19 @@
                 switch (selector)
                 {
                     case 1:
-                        aes.AesEncryption(Convert.ToBoolean(selectorSsl - 1));
+                        Console.WriteLine("Что шифруем?\n1 - Строка\n2 - Картинка");
+                        selector = Convert.ToInt32(Console.ReadLine());
+                        switch(selector)
+                        {
+                            case 1:
+                                aes.AesEncryption(Convert.ToBoolean(selectorSsl - 1));
+                                break;
+                            case 2:
+                                Console.WriteLine("Название картинки");
+                                var name = Console.ReadLine();
+                                aes.ImageEncryption(name!, Convert.ToBoolean(selectorSsl - 1));
+                                break;
+                        }
                         break;
                     case 2:
                         blowfish.DoStuff(Convert.ToBoolean(selectorSsl - 1));
