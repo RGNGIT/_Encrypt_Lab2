@@ -1,12 +1,5 @@
-﻿using System;
-using System.Text;
-using System.IO;
-
-namespace Simias.Encryption
+﻿namespace Simias.Encryption
 {
-    /// <summary>
-    /// Class that provides blowfish encryption.
-    /// </summary>
     public class BlowfishCore
     {
         const int N = 16;
@@ -205,10 +198,6 @@ namespace Simias.Encryption
         uint[] P;
         uint[,] S;
 
-        /// <summary>
-        /// Constructs and initializes a blowfish instance with the supplied key.
-        /// </summary>
-        /// <param name="key">The key to cipher with.</param>
         public BlowfishCore(byte[] key)
         {
             short i;
@@ -259,11 +248,6 @@ namespace Simias.Encryption
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="x"></param>
-        /// <returns></returns>
         private uint F(uint x)
         {
             ushort a;
@@ -287,11 +271,6 @@ namespace Simias.Encryption
             return y;
         }
 
-        /// <summary>
-        /// Encrypts a byte array in place.
-        /// </summary>
-        /// <param name="data">The array to encrypt.</param>
-        /// <param name="length">The amount to encrypt.</param>
         public byte[] Encipher(byte[] data, int length)
         {
             uint xl, xr;
@@ -299,11 +278,9 @@ namespace Simias.Encryption
                 throw new Exception("Invalid Length");
             for (int i = 0; i < length; i += 8)
             {
-                // Encode the data in 8 byte blocks.
                 xl = (uint)((data[i] << 24) | (data[i + 1] << 16) | (data[i + 2] << 8) | data[i + 3]);
                 xr = (uint)((data[i + 4] << 24) | (data[i + 5] << 16) | (data[i + 6] << 8) | data[i + 7]);
                 Encipher(ref xl, ref xr);
-                // Now Replace the data.
                 data[i] = (byte)(xl >> 24);
                 data[i + 1] = (byte)(xl >> 16);
                 data[i + 2] = (byte)(xl >> 8);
@@ -316,11 +293,6 @@ namespace Simias.Encryption
             return data;
         }
 
-        /// <summary>
-        /// Encrypts 8 bytes of data (1 block)
-        /// </summary>
-        /// <param name="xl">The left part of the 8 bytes.</param>
-        /// <param name="xr">The right part of the 8 bytes.</param>
         private void Encipher(ref uint xl, ref uint xr)
         {
             uint Xl;
@@ -352,11 +324,6 @@ namespace Simias.Encryption
             xr = Xr;
         }
 
-        /// <summary>
-        /// Decrypts a byte array in place.
-        /// </summary>
-        /// <param name="data">The array to decrypt.</param>
-        /// <param name="length">The amount to decrypt.</param>
         public byte[] Decipher(byte[] data, int length)
         {
             uint xl, xr;
@@ -364,11 +331,9 @@ namespace Simias.Encryption
                 throw new Exception("Invalid Length");
             for (int i = 0; i < length; i += 8)
             {
-                // Encode the data in 8 byte blocks.
                 xl = (uint)((data[i] << 24) | (data[i + 1] << 16) | (data[i + 2] << 8) | data[i + 3]);
                 xr = (uint)((data[i + 4] << 24) | (data[i + 5] << 16) | (data[i + 6] << 8) | data[i + 7]);
                 Decipher(ref xl, ref xr);
-                // Now Replace the data.
                 data[i] = (byte)(xl >> 24);
                 data[i + 1] = (byte)(xl >> 16);
                 data[i + 2] = (byte)(xl >> 8);
@@ -381,11 +346,6 @@ namespace Simias.Encryption
             return data;
         }
 
-        /// <summary>
-        /// Decrypts 8 bytes of data (1 block)
-        /// </summary>
-        /// <param name="xl">The left part of the 8 bytes.</param>
-        /// <param name="xr">The right part of the 8 bytes.</param>
         private void Decipher(ref uint xl, ref uint xr)
         {
             uint Xl;
@@ -400,14 +360,11 @@ namespace Simias.Encryption
             {
                 Xl = Xl ^ P[i];
                 Xr = F(Xl) ^ Xr;
-
-                /* Exchange Xl and Xr */
                 temp = Xl;
                 Xl = Xr;
                 Xr = temp;
             }
 
-            /* Exchange Xl and Xr */
             temp = Xl;
             Xl = Xr;
             Xr = temp;
@@ -488,62 +445,37 @@ namespace Simias.Encryption
             this.target = target;
         }
 
-        /// <summary>
-        /// Returns true if the stream support reads.
-        /// </summary>
         public override bool CanRead
         {
             get { return stream.CanRead; }
         }
 
-        /// <summary>
-        /// Returns true is the stream supports seeks.
-        /// </summary>
         public override bool CanSeek
         {
             get { return stream.CanSeek; }
         }
 
-        /// <summary>
-        /// Returns true if the stream supports writes.
-        /// </summary>
         public override bool CanWrite
         {
             get { return stream.CanWrite; }
         }
 
-        /// <summary>
-        /// Returns the length of the stream.
-        /// </summary>
         public override long Length
         {
             get { return stream.Length; }
         }
 
-        /// <summary>
-        /// Gets or Sets the posistion of the stream.
-        /// </summary>
         public override long Position
         {
             get { return stream.Position; }
             set { stream.Position = value; }
         }
 
-        /// <summary>
-        /// Flushes the stream.
-        /// </summary>
         public override void Flush()
         {
             stream.Flush();
         }
 
-        /// <summary>
-        /// Read data from the stream and encrypt it.
-        /// </summary>
-        /// <param name="buffer">The buffer to read into.</param>
-        /// <param name="offset">The offset in the buffer to begin storing data.</param>
-        /// <param name="count">The number of bytes to read.</param>
-        /// <returns></returns>
         public override int Read(byte[] buffer, int offset, int count)
         {
             int bytesRead = stream.Read(buffer, offset, count);
@@ -554,12 +486,6 @@ namespace Simias.Encryption
             return bytesRead;
         }
 
-        /// <summary>
-        /// Write data to the stream after decrypting it.
-        /// </summary>
-        /// <param name="buffer">The buffer containing the data to write.</param>
-        /// <param name="offset">The offset in the buffer where the data begins.</param>
-        /// <param name="count">The number of bytes to write.</param>
         public override void Write(byte[] buffer, int offset, int count)
         {
             if (target == Target.Normal)
@@ -569,15 +495,6 @@ namespace Simias.Encryption
             stream.Write(buffer, offset, count);
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="offset"></param>
-        /// <param name="count"></param>
-        /// <param name="callback"></param>
-        /// <param name="state"></param>
-        /// <returns></returns>
         public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback? callback, object? state)
         {
             CBState cbs = new CBState(callback!, state!, buffer);
@@ -585,11 +502,6 @@ namespace Simias.Encryption
             return cbs;
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="asyncResult"></param>
-        /// <returns></returns>
         public override int EndRead(IAsyncResult asyncResult)
         {
             CBState cbs = (CBState)asyncResult.AsyncState!;
@@ -601,27 +513,12 @@ namespace Simias.Encryption
             return bytesRead;
         }
 
-
-        /// <summary>
-        /// The Read has completed.
-        /// </summary>
-        /// <param name="result">The result of the async write.</param>
         private void ReadComplete(IAsyncResult result)
         {
             CBState cbs = (CBState)result.AsyncState!;
             cbs!.callback(cbs);
         }
 
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="buffer"></param>
-        /// <param name="offset"></param>
-        /// <param name="count"></param>
-        /// <param name="callback"></param>
-        /// <param name="state"></param>
-        /// <returns></returns>
         public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback? callback, object? state)
         {
             if (target == Target.Normal)
@@ -631,21 +528,11 @@ namespace Simias.Encryption
             return base.BeginWrite(buffer, offset, count, callback!, state!);
         }
 
-        /// <summary>
-        /// Move the current stream posistion to the specified location.
-        /// </summary>
-        /// <param name="offset">The offset from the origin to seek.</param>
-        /// <param name="origin">The origin to seek from.</param>
-        /// <returns>The new position.</returns>
         public override long Seek(long offset, SeekOrigin origin)
         {
             return stream.Seek(offset, origin);
         }
 
-        /// <summary>
-        /// Set the stream length.
-        /// </summary>
-        /// <param name="value">The length to set.</param>
         public override void SetLength(long value)
         {
             stream.SetLength(value);

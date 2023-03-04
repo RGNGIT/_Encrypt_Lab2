@@ -27,10 +27,10 @@ namespace _Encrypt_Lab2
                     string base64Image = Convert.ToBase64String(image);
                     byte[] result = Encrypt(base64Image, sslGenerated ? GlobalKey! : key);
                     Console.WriteLine(Convert.ToBase64String(result));
-                    File.WriteAllBytes("aes_encrypted_img", result);
+                    File.WriteAllBytes("blowfish_encrypted_img", result);
                     break;
                 case 2:
-                    byte[] toDecrypt = File.ReadAllBytes("aes_encrypted_img");
+                    byte[] toDecrypt = File.ReadAllBytes("blowfish_encrypted_img");
                     string base64Decrypt = Decrypt(toDecrypt, sslGenerated ? GlobalKey! : key);
                     Console.WriteLine(base64Decrypt);
                     File.WriteAllBytes(name, Convert.FromBase64String(base64Decrypt));
