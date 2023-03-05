@@ -6,6 +6,12 @@ namespace _Encrypt_Lab2
     {
 
         byte[]? GlobalKey = null;
+        CipherMode mode;
+
+        public AES(CipherMode mode)
+        {
+            this.mode = mode;
+        }
 
         public void ImageEncryption(string name, bool sslGenerated)
         {
@@ -25,13 +31,13 @@ namespace _Encrypt_Lab2
                     byte[] image = File.ReadAllBytes(name);
                     string base64Image = Convert.ToBase64String(image);
                     byte[] result = Encrypt(base64Image, sslGenerated ? GlobalKey! : key);
-                    Console.WriteLine(Convert.ToBase64String(result));
+                    // Console.WriteLine(Convert.ToBase64String(result));
                     File.WriteAllBytes("aes_encrypted_img", result);
                     break;
                 case 2:
                     byte[] toDecrypt = File.ReadAllBytes("aes_encrypted_img");
                     string base64Decrypt = Decrypt(toDecrypt, sslGenerated ? GlobalKey! : key);
-                    Console.WriteLine(base64Decrypt);
+                    // Console.WriteLine(base64Decrypt);
                     File.WriteAllBytes(name, Convert.FromBase64String(base64Decrypt));
                     break;
             }
@@ -76,7 +82,7 @@ namespace _Encrypt_Lab2
             {
                 aes.Key = key;
                 aes.GenerateIV();
-                aes.Mode = CipherMode.CBC;
+                aes.Mode = mode;
                 aes.Padding = PaddingMode.PKCS7;
                 using (MemoryStream msEncrypt = new MemoryStream())
                 {
@@ -100,7 +106,7 @@ namespace _Encrypt_Lab2
             using (Aes aes = Aes.Create())
             {
                 aes.Key = key;
-                aes.Mode = CipherMode.CBC;
+                aes.Mode = mode;
                 aes.Padding = PaddingMode.PKCS7;
                 using (MemoryStream msDecryptor = new MemoryStream(encrypted))
                 {

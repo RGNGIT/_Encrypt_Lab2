@@ -1,8 +1,16 @@
-﻿namespace _Encrypt_Lab2 {
+﻿using System.Security.Cryptography;
+
+namespace _Encrypt_Lab2 {
     static class Program
     {
 
-        static AES aes = new();
+        static CipherMode[] modes = new CipherMode[2] 
+        {
+            CipherMode.CBC,
+            CipherMode.ECB,
+        }; 
+
+        static AES aes = new(modes[0]);
         static Blowfish blowfish = new();
 
         static void Main()

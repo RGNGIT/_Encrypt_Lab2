@@ -26,13 +26,13 @@ namespace _Encrypt_Lab2
                     byte[] image = File.ReadAllBytes(name);
                     string base64Image = Convert.ToBase64String(image);
                     byte[] result = Encrypt(base64Image, sslGenerated ? GlobalKey! : key);
-                    Console.WriteLine(Convert.ToBase64String(result));
+                    // Console.WriteLine(Convert.ToBase64String(result));
                     File.WriteAllBytes("blowfish_encrypted_img", result);
                     break;
                 case 2:
                     byte[] toDecrypt = File.ReadAllBytes("blowfish_encrypted_img");
                     string base64Decrypt = Decrypt(toDecrypt, sslGenerated ? GlobalKey! : key);
-                    Console.WriteLine(base64Decrypt);
+                    // Console.WriteLine(base64Decrypt);
                     File.WriteAllBytes(name, Convert.FromBase64String(base64Decrypt));
                     break;
             }
@@ -55,11 +55,14 @@ namespace _Encrypt_Lab2
                     }
                     Console.WriteLine("Введите строку для шифрования");
                     string toEncrypt = Console.ReadLine()!;
-                    File.WriteAllBytes("blowfish_encrypted", Encrypt(toEncrypt, sslGenerated ? GlobalKey! : key));
+                    byte[] encrypted = Encrypt(toEncrypt, sslGenerated ? GlobalKey! : key);
+                    File.WriteAllBytes("blowfish_encrypted", encrypted);
+                    Console.WriteLine(toEncrypt + " -> " + Convert.ToBase64String(encrypted));
                     break;
                 case 2:
-                    byte[] encrypted = File.ReadAllBytes("blowfish_encrypted");
-                    Decrypt(encrypted, sslGenerated ? GlobalKey! : key);
+                    byte[] toDecrypt = File.ReadAllBytes("blowfish_encrypted");
+                    string decrypted = Decrypt(toDecrypt, sslGenerated ? GlobalKey! : key);
+                    Console.WriteLine(Convert.ToBase64String(toDecrypt) + " -> " + decrypted);
                     break;
             }
             Console.ReadKey();
@@ -68,14 +71,12 @@ namespace _Encrypt_Lab2
         {
             BlowfishCore blowfishCore = new(key);
             byte[] encrypted = blowfishCore.Encipher(ASCIIEncoding.ASCII.GetBytes(toEncrypt), (byte)8);
-            Console.WriteLine(toEncrypt + " -> " + Convert.ToBase64String(encrypted));
             return encrypted;
         }
         string Decrypt(byte[] encrypted, byte[] key)
         {
             BlowfishCore blowfishCore = new(key);
             string decrypted = ASCIIEncoding.ASCII.GetString(blowfishCore.Decipher(encrypted, (byte)8));
-            Console.WriteLine(Convert.ToBase64String(encrypted) + " -> " + decrypted);
             return decrypted;
         }
     }
