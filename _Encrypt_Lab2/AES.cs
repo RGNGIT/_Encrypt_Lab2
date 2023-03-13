@@ -84,12 +84,12 @@ namespace _Encrypt_Lab2
                 aes.GenerateIV();
                 aes.Mode = mode;
                 aes.Padding = PaddingMode.PKCS7;
-                using (MemoryStream msEncrypt = new MemoryStream())
+                using (MemoryStream msEncrypt = new ())
                 {
                     msEncrypt.Write(aes.IV, 0, aes.IV.Length);
                     ICryptoTransform encoder = aes.CreateEncryptor();
-                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encoder, CryptoStreamMode.Write))
-                    using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
+                    using (CryptoStream csEncrypt = new (msEncrypt, encoder, CryptoStreamMode.Write))
+                    using (StreamWriter swEncrypt = new (csEncrypt))
                     {
                         swEncrypt.Write(toEncrypt);
                     }
@@ -108,14 +108,14 @@ namespace _Encrypt_Lab2
                 aes.Key = key;
                 aes.Mode = mode;
                 aes.Padding = PaddingMode.PKCS7;
-                using (MemoryStream msDecryptor = new MemoryStream(encrypted))
+                using (MemoryStream msDecryptor = new (encrypted))
                 {
                     byte[] readIV = new byte[16];
                     msDecryptor.Read(readIV, 0, 16);
                     aes.IV = readIV;
                     ICryptoTransform decoder = aes.CreateDecryptor();
-                    using (CryptoStream csDecryptor = new CryptoStream(msDecryptor, decoder, CryptoStreamMode.Read))
-                    using (StreamReader srReader = new StreamReader(csDecryptor))
+                    using (CryptoStream csDecryptor = new (msDecryptor, decoder, CryptoStreamMode.Read))
+                    using (StreamReader srReader = new (csDecryptor))
                     {
                         decrypted = srReader.ReadToEnd();
                     }
