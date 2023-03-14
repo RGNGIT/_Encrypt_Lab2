@@ -39,10 +39,15 @@ namespace _Encrypt_Lab2
                     File.WriteAllBytes("aes_encrypted_img.bmp", result);
                     break;
                 case 2:
-                    byte[] toDecrypt = File.ReadAllBytes("aes_encrypted_img");
+                    byte[] toDecrypt = File.ReadAllBytes("aes_encrypted_img.bmp");
+                    var headerDecrypt = toDecrypt[0..54];
+                    var listDecrypt = toDecrypt.ToList();
+                    listDecrypt.RemoveRange(0, 54);
+                    toDecrypt = listDecrypt.ToArray();
                     string base64Decrypt = Decrypt(toDecrypt, sslGenerated ? GlobalKey! : key);
                     // Console.WriteLine(base64Decrypt);
-                    File.WriteAllBytes(name, Convert.FromBase64String(base64Decrypt));
+                    var resultD = Program.ArrayJoin(headerDecrypt, Convert.FromBase64String(base64Decrypt));
+                    File.WriteAllBytes(name, resultD);
                     break;
             }
             Console.ReadKey();

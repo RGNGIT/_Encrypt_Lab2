@@ -36,9 +36,14 @@ namespace _Encrypt_Lab2
                     break;
                 case 2:
                     byte[] toDecrypt = File.ReadAllBytes("blowfish_encrypted_img");
+                    var headerDecrypt = toDecrypt[0..54];
+                    var listDecrypt = toDecrypt.ToList();
+                    listDecrypt.RemoveRange(0, 54);
+                    toDecrypt = listDecrypt.ToArray();
                     string base64Decrypt = Decrypt(toDecrypt, sslGenerated ? GlobalKey! : key);
                     // Console.WriteLine(base64Decrypt);
-                    File.WriteAllBytes(name, Convert.FromBase64String(base64Decrypt));
+                    var resultD = Program.ArrayJoin(headerDecrypt, Convert.FromBase64String(base64Decrypt));
+                    File.WriteAllBytes(name, resultD);
                     break;
             }
             Console.ReadKey();
