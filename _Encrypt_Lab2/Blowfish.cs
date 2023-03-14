@@ -24,10 +24,15 @@ namespace _Encrypt_Lab2
             {
                 case 1:
                     byte[] image = File.ReadAllBytes(name);
-                    string base64Image = Convert.ToBase64String(image);
-                    byte[] result = Encrypt(base64Image, sslGenerated ? GlobalKey! : key);
+                    // string base64Image = Convert.ToBase64String(image);
+                    var header = image[0..54];
+                    var list = image.ToList();
+                    list.RemoveRange(0, 54);
+                    image = list.ToArray();
+                    byte[] result = Encrypt(image, sslGenerated ? GlobalKey! : key);
+                    result = Program.ArrayJoin(header, result);
                     // Console.WriteLine(Convert.ToBase64String(result));
-                    File.WriteAllBytes("blowfish_encrypted_img", result);
+                    File.WriteAllBytes("blowfish_encrypted_img.bmp", result);
                     break;
                 case 2:
                     byte[] toDecrypt = File.ReadAllBytes("blowfish_encrypted_img");
@@ -66,6 +71,12 @@ namespace _Encrypt_Lab2
                     break;
             }
             Console.ReadKey();
+        }
+        byte[] Encrypt(byte[] toEncrypt, byte[] key)
+        {
+            BlowfishCore blowfishCore = new(key);
+            byte[] encrypted = blowfishCore.Encipher(toEncrypt, (byte)8);
+            return encrypted;
         }
         byte[] Encrypt(string toEncrypt, byte[] key)
         {

@@ -4,13 +4,27 @@ namespace _Encrypt_Lab2 {
     static class Program
     {
 
+        public static byte[] ArrayJoin(byte[] arr1, byte[] arr2)
+        {
+            List<byte> list = new ();
+            foreach(byte b in arr1) 
+            {
+                list.Add(b);
+            }
+            foreach(byte b in arr2)
+            {
+                list.Add(b);
+            }
+            return list.ToArray();
+        }
+
         static CipherMode[] modes = new CipherMode[2] 
         {
             CipherMode.CBC,
             CipherMode.ECB,
         }; 
 
-        static AES aes = new(modes[0]);
+        static AES aes = new(modes[1]);
         static Blowfish blowfish = new();
 
         static void Main()
